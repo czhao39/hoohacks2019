@@ -1,8 +1,11 @@
 $(document).ready(function() {
-    $("#event_id").keypress(function(e) {
-        if (e.which == 13) {
-            $("form#watch_form").submit();
-            return false;
+    $("#watch_form").submit(function(e) {
+        e.preventDefault();
+        var call_id = $("#event_id").val();
+        if (call_id) {
+            window.location.href = "/call/" + call_id;
         }
     });
+
+    $("#event_id").focus();
 });

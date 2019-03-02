@@ -9,11 +9,16 @@
 {% block content %}
     {{ super() }}
     <div class="middle-content-wrapper">
-        <h2>Enter the Event ID:</h2>
-        <form id="watch_form" method="GET">
+        <h2>Enter your Event ID</h2>
+        <form id="watch_form">
             <div class="input-field">
-                <input name="event_id" id="event_id" type="text" class="validate">
+                <input name="event_id" id="event_id" type="text" class="validate" />
             </div>
+            <span class="helper-text">An event id is composed of three words, separated by colons.</span>
         </form>
+
+        <br />
+
+        <a class="btn waves-effect waves-light red lighten-2" href="/">Back</a>
     </div>
 {% endblock %}

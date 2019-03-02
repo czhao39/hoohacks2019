@@ -2,6 +2,7 @@
 
 import os
 import sys
+import random
 
 from flask import *
 from flask_socketio import SocketIO
@@ -16,15 +17,42 @@ def landing():
     return render_template("landing.html")
 
 @app.route("/host")
-def host_landing():
-    return render_template("host_landing.html")
+def host():
+    with open("./static/english-adjectives.txt", "r") as f:
+        adjectives = [x.strip() for x in f.readlines()]
+
+    with open("./static/english-nouns.txt", "r") as f:
+        nouns = [x.strip() for x in f.readlines()]
+
+    call_id = "{}-{}-{}".format(random.choice(adjectives), random.choice(adjectives), random.choice(nouns))
+
+    return redirect("/call/" + call_id, code=302)
+
+@app.route("/call/<call_id>")
+def call(call_id):
+    return render_template("call.html", event_id=call_id)
 
 @app.route("/watch")
 def watch_landing():
-    if "event_id" in request.args:
-        return render_template("watch.html", event_id=request.args["event_id"])
-    else:
-        return render_template("watch_landing.html")
+    return render_template("watch_landing.html")
+
+
+@socketio.on('message')
+def on_message(msg):
+    # TODO
+    print(msg)
+
+
+@socketio.on('connect')
+def on_connect():
+    # TODO
+    print("Socket Connected")
+
+
+@socketio.on('disconnect')
+def on_disconnect():
+    # TODO
+    print("Socket Disconnected")
 
 
 if __name__ == "__main__":
