@@ -10,17 +10,12 @@ def landing():
 def host_landing():
     return render_template("landing.html")
 
-@app.route("/host/<meeting_id>")
-def host(meeting_id=None):
-    return render_template("landing.html")
-
 @app.route("/watch")
 def watch_landing():
-    return render_template("landing.html")
-
-@app.route("/watch/<meeting_id>")
-def watch(meeting_id=None):
-    return render_template("landing.html")
+    if "event_id" in request.args:
+        return render_template("watch.html", event_id=request.args["event_id"])
+    else:
+        return render_template("watch_landing.html")
 
 
 if __name__ == "__main__":

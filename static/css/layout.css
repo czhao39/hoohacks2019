@@ -1,5 +1,6 @@
-body {
-    min-height: 100vh;
+.middle-content-wrapper {
+    margin-top: 25vh;
+    text-align: center;
 }
 
 .btn, .btn-large {
@@ -8,4 +9,8 @@ body {
 
 .btn:hover, .btn-large:hover {
     background-color: #2962ff;
+}
+
+.input-field input[type=text]:focus {
+    border-bottom: 1px solid #2962ff !important;
 }
