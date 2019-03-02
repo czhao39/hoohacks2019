@@ -1,5 +1,11 @@
 {% extends "layout.html" %}
 
+{% block head %}
+    {{ super() }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+    <script type="text/javascript" src="/js/call.js"></script>
+{% endblock %}
+
 {% block content %}
     {{ super() }}
     Event ID: {{ event_id }}

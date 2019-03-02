@@ -37,21 +37,21 @@ def watch_landing():
     return render_template("watch_landing.html")
 
 
-@socketio.on('message')
+@socketio.on('sound')
 def on_message(msg):
-    # TODO
+    # TODO: implement sound -> text, msg is webm audio in raw format
     print(msg)
 
 
 @socketio.on('connect')
 def on_connect():
-    # TODO
+    # TODO: add person to room
     print("Socket Connected")
 
 
 @socketio.on('disconnect')
 def on_disconnect():
-    # TODO
+    # TODO: remove person from room
     print("Socket Disconnected")
 
 
