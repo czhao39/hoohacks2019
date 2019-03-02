@@ -3,6 +3,11 @@
 import os
 import sys
 import random
+import io
+
+from google.cloud import speech
+from google.cloud.speech import enums
+from google.cloud.speech import types
 
 from flask import *
 from flask_socketio import SocketIO
@@ -10,6 +15,12 @@ from flask_socketio import SocketIO
 app = Flask(__name__, static_url_path="")
 app.config['SECRET_KEY'] = os.urandom(24)
 socketio = SocketIO(app)
+
+client = speech.SpeechClient()
+recog_config = types.RecognitionConfig(
+                   encoding=enums.RecognitionConfig.AudioEncoding.LINEAR16,
+                   sample_rate_hertz=16000,
+                   language_code='en-US')
 
 
 @app.route("/")
@@ -53,6 +64,13 @@ def on_connect():
 def on_disconnect():
     # TODO: remove person from room
     print("Socket Disconnected")
+
+def transcribe_audio(stream):
+    content = stream.read()
+    audio = types.RecognitionAudio(content=content)
+    response = client.recognize(recog_config, audio)
+    text = [res.alternatives[0].transcript for res in response.results]
+    return text
 
 
 if __name__ == "__main__":
