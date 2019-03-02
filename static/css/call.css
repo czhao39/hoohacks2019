@@ -1,7 +1,13 @@
 #self-video {
-    position: fixed;
-    bottom: 15px;
-    right: 15px;
-    min-width: 300px;
-    width: 20%;
+    width: 100%;
+}
+
+.event-msg {
+    display: block;
+    color: grey;
+    margin: 10px 0px;
+}
+
+.event-msg kbd {
+    color: black;
 }

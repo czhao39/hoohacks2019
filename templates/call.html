@@ -9,7 +9,7 @@
 
 {% block content %}
     {{ super() }}
-    Event ID: {{ event_id }}
+    <span class="event-msg">Event ID: <kbd>{{ event_id }}</kbd></span>
 
     <video id="self-video" />
 {% endblock %}
