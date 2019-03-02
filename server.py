@@ -1,7 +1,14 @@
 #!/usr/bin/env python3
 
+import os
+import sys
+
 from flask import *
+from flask_socketio import SocketIO
+
 app = Flask(__name__, static_url_path="")
+app.config['SECRET_KEY'] = os.urandom(24)
+socketio = SocketIO(app)
 
 
 @app.route("/")
@@ -21,5 +28,4 @@ def watch_landing():
 
 
 if __name__ == "__main__":
-    import sys
-    app.run(host="0.0.0.0", port = int(sys.argv[1]) if len(sys.argv) > 1 else 8080, threaded=True)
+    socketio.run(app, host="0.0.0.0", port=8080, debug=True)
