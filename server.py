@@ -6,8 +6,16 @@ app = Flask(__name__, static_url_path="")
 def landing():
     return render_template("landing.html")
 
+@app.route("/host")
+def host_landing():
+    return render_template("landing.html")
+
 @app.route("/host/<meeting_id>")
 def host(meeting_id=None):
+    return render_template("landing.html")
+
+@app.route("/watch")
+def watch_landing():
     return render_template("landing.html")
 
 @app.route("/watch/<meeting_id>")
