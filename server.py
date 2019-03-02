@@ -10,7 +10,7 @@ def landing():
 
 @app.route("/host")
 def host_landing():
-    return render_template("landing.html")
+    return render_template("host_landing.html")
 
 @app.route("/watch")
 def watch_landing():

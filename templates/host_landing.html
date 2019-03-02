@@ -2,15 +2,15 @@
 
 {% block head %}
     {{ super() }}
-    <link rel="stylesheet" href="/css/watch_landing.css">
-    <script type="text/javascript" src="/js/watch_landing.js"></script>
+    <link rel="stylesheet" href="/css/host_landing.css">
+    <script type="text/javascript" src="/js/host_landing.js"></script>
 {% endblock %}
 
 {% block content %}
     {{ super() }}
     <div class="middle-content-wrapper">
-        <h2>Enter the Event ID:</h2>
-        <form id="watch_form" method="GET">
+        <h2>Enter an Event ID:</h2>
+        <form id="host_form" method="GET">
             <div class="input-field">
                 <input name="event_id" id="event_id" type="text" class="validate">
             </div>
