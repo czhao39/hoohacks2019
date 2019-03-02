@@ -1,0 +1,13 @@
+#landing-content-wrapper {
+    margin-top: 25vh;
+}
+
+#host-btn, #watch-btn {
+    margin-left: 2em;
+    margin-right: 2em;
+    margin-top: 1em;
+    min-width: 8em;
+    height: auto;
+    font-size: 2em;
+    line-height: 3em;
+}

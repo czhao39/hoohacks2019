@@ -1,6 +1,17 @@
 {% extends "layout.html" %}
 
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="/css/landing.css" />
+{% endblock %}
+
 {% block content %}
     {{ super() }}
-    Hello world!
+    <div id="landing-content-wrapper" class="center-align">
+        <h1>
+            Welcome to Panscribe!
+        </h1>
+        <a id="host-btn" class="waves-effect waves-light btn-large" href="/host">Host</a>
+        <a id="watch-btn" class="waves-effect waves-light btn-large" href="/watch">Watch</a>
+    </div>
 {% endblock %}

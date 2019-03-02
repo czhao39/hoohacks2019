@@ -1,0 +1,11 @@
+body {
+    min-height: 100vh;
+}
+
+.btn, .btn-large {
+    background-color: #2979ff;
+}
+
+.btn:hover, .btn-large:hover {
+    background-color: #2962ff;
+}
