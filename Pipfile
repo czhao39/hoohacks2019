@@ -10,6 +10,7 @@ google-cloud-speech = "*"
 pylint = "*"
 flask = "*"
 flask-socketio = "*"
+google-cloud-translate = "*"
 
 [requires]
 python_version = "3.7"

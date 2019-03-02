@@ -8,6 +8,7 @@ import io
 from google.cloud import speech
 from google.cloud.speech import enums
 from google.cloud.speech import types
+from google.cloud import translate
 
 from flask import *
 from flask_socketio import SocketIO
@@ -16,7 +17,8 @@ app = Flask(__name__, static_url_path="")
 app.config['SECRET_KEY'] = os.urandom(24)
 socketio = SocketIO(app)
 
-client = speech.SpeechClient()
+recog_client = speech.SpeechClient()
+translate_client = translate.Client()
 recog_config = types.RecognitionConfig(
                    encoding=enums.RecognitionConfig.AudioEncoding.LINEAR16,
                    sample_rate_hertz=16000,
@@ -68,9 +70,13 @@ def on_disconnect():
 def transcribe_audio(stream):
     content = stream.read()
     audio = types.RecognitionAudio(content=content)
-    response = client.recognize(recog_config, audio)
+    response = recog_client.recognize(recog_config, audio)
     text = [res.alternatives[0].transcript for res in response.results]
     return text
+
+def translate_text(text, target_lang):
+    translation = translate_client.translate(text, target_language=target_lang)
+    return translation["translatedText"]
 
 
 if __name__ == "__main__":
