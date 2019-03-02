@@ -1,0 +1,7 @@
+#self-video {
+    position: fixed;
+    bottom: 15px;
+    right: 15px;
+    min-width: 300px;
+    width: 20%;
+}

@@ -1,5 +1,8 @@
 async function init(ws) {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+    const videoElement = document.getElementById("self-video");
+    videoElement.srcObject = stream;
+    videoElement.play();
     const mediaRecorder = new MediaRecorder(stream, {mimeType: "audio/webm"});
     mediaRecorder.ondataavailable = function(data) {
         ws.emit('sound', data.data);
