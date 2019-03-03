@@ -18,7 +18,7 @@ from google.cloud.speech import types
 from google.cloud import translate
 
 from flask import *
-from flask_socketio import SocketIO, join_room, leave_room
+from flask_socketio import SocketIO, join_room, leave_room, emit
 
 app = Flask(__name__, static_url_path="")
 app.config['SECRET_KEY'] = os.urandom(24)
@@ -74,7 +74,7 @@ def on_message(msg):
 @socketio.on('translate')
 def on_translate(msg):
     output = translate_text(msg['text'], msg['lang'])
-    socketio.emit('translate', output)
+    emit('translate', output)
 
 
 def convert_audio(content):
@@ -85,13 +85,13 @@ def on_connect():
     pass
 
 
-@socketio.on('broadcast')
-def on_broadcast(msg):
-    socketio.emit('broadcast', msg["text"], room=msg["room"])
+@socketio.on('sub')
+def on_broadcast_subtitle(msg):
+    emit('sub', msg["text"], room=msg["room"], include_self=False)
 
 
 @socketio.on('join')
-def on_join(msg):
+def on_join_call(msg):
     rid = msg["room"]
     sid = str(request.sid)
     join_room(rid)
@@ -101,8 +101,8 @@ def on_join(msg):
         hid = redis.get("sid:{}".format(rid))
         if isinstance(hid, bytes):
             hid = hid.decode("utf-8")
-        socketio.emit('addPeer', {'peer_id': sid, 'should_create_offer': False}, room=hid)
-        socketio.emit('addPeer', {'peer_id': hid, 'should_create_offer': True})
+        emit('addPeer', {'peer_id': sid, 'your_id': hid, 'room_id': rid, 'should_create_offer': False}, room=hid, include_self=False)
+        emit('addPeer', {'peer_id': hid, 'your_id': sid, 'room_id': rid, 'should_create_offer': True})
 
 
 @socketio.on('relayICECandidate')
@@ -110,7 +110,7 @@ def on_ice_candidate(msg):
     peer_id = msg["peer_id"]
     if not isinstance(peer_id, str):
         peer_id = peer_id.decode("utf-8")
-    socketio.emit('iceCandidate', {"peer_id": peer_id, "ice_candidate": msg["ice_candidate"]}, room=peer_id)
+    emit('iceCandidate', {"peer_id": str(request.sid), "ice_candidate": msg["ice_candidate"]}, room=peer_id, include_self=False)
 
 
 @socketio.on('relaySessionDescription')
@@ -118,7 +118,7 @@ def on_relay_session(msg):
     peer_id = msg["peer_id"]
     if not isinstance(peer_id, str):
         peer_id = peer_id.decode("utf-8")
-    socketio.emit('sessionDescription', {"peer_id": peer_id, "session_description": json.loads(msg["session_description"])}, room=peer_id)
+    emit('sessionDescription', {"peer_id": str(request.sid), "session_description": msg["session_description"]}, room=peer_id, include_self=False)
 
 
 @socketio.on('disconnect')
@@ -149,7 +149,7 @@ def transcribe_streaming(sid, flac):
     for response in responses:
         if response.results[0].is_final:
             text = response.results[0].alternatives[0].transcript
-            socketio.emit("text", text)
+            emit("text", text)
 
 def translate_text(text, target_lang):
     translation = translate_client.translate(text, target_language=target_lang)

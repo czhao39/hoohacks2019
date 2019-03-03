@@ -45,7 +45,7 @@ function showSubtitle(text, ws) {
         ws.emit("translate", {"text": text, "lang": lang});
     }
     if (window.role == "host") {
-        ws.emit("broadcast", {"text": text, "room": window.room});
+        ws.emit("sub", {"text": text, "room": window.room});
     }
 }
 
@@ -121,25 +121,25 @@ $(document).ready(function() {
             ws.on('sessionDescription', function(config) {
                 var peer_id = config.peer_id;
                 var peer = peers[peer_id];
-                var remote_description = config.session_description;
+                var remote_description = JSON.parse(config.session_description);
                 var desc = new RTCSessionDescription(remote_description);
                 peer.setRemoteDescription(desc, function() {
-                        if (remote_description.type == "offer") {
-                            peer.createAnswer(
-                                function(local_description) {
-                                    peer.setLocalDescription(local_description,
-                                        function() {
-                                            ws.emit('relaySessionDescription', {'peer_id': peer_id, 'session_description': JSON.stringify(local_description)});
-                                        },
-                                        function() { alert("Answer setLocalDescription failed!"); }
-                                    );
-                                },
-                                function(error) {
-                                    console.log("Error creating answer: ", error);
-                                    console.log(peer);
-                                });
-                        }
-                    },
+                    if (remote_description.type == "offer") {
+                        peer.createAnswer(
+                            function(local_description) {
+                                peer.setLocalDescription(local_description,
+                                    function() {
+                                        ws.emit('relaySessionDescription', {'peer_id': peer_id, 'session_description': JSON.stringify(local_description)});
+                                    },
+                                    function() { alert("Answer setLocalDescription failed!"); }
+                                );
+                            },
+                            function(error) {
+                                console.log("Error creating answer: ", error);
+                                console.log(peer);
+                            });
+                    }
+                },
                     function(error) {
                         console.log("setRemoteDescription error: ", error.message);
                     }
@@ -153,7 +153,7 @@ $(document).ready(function() {
             init(ws, finishFunction);
         }
         else {
-            ws.on('broadcast', function(text) {
+            ws.on('sub', function(text) {
                 showSubtitle(text, ws);
             });
             finishFunction(null);
