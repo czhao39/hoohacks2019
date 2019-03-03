@@ -3,12 +3,12 @@ function resizeInterface() {
 }
 
 function init(ws, callback) {
-    navigator.mediaDevices.getUserMedia({ audio: true, video: true }).then(function(stream) {
-        if (window.role !== "host") {
-            callback(stream);
-            return;
-        }
+    if (window.role !== "host") {
+        callback(null);
+        return;
+    }
 
+    navigator.mediaDevices.getUserMedia({ audio: true, video: true }).then(function(stream) {
         const videoElement = document.getElementById("self-video");
         videoElement.setAttribute("muted", true);
         videoElement.srcObject = stream;
@@ -127,7 +127,15 @@ $(document).ready(function() {
                     }
                 };
 
-                conn.addStream(stream);
+                if (window.role === "host") {
+                    stream.getTracks().forEach(track => conn.addTrack(track, stream));
+                }
+
+                conn.onaddtrack = function(e) {
+                    if (window.role !== "host") {
+                        $("#self-video")[0].srcObject = e.streams[0];
+                    }
+                };
 
                 if (msg.should_create_offer) {
                     conn.createOffer(function (local_description) {
@@ -175,10 +183,9 @@ $(document).ready(function() {
                             });
                     }
                 },
-                    function(error) {
-                        console.log("setRemoteDescription error: ", error.message);
-                    }
-                );
+                function(error) {
+                    console.log("setRemoteDescription error: ", error.message);
+                });
             });
 
             ws.emit("join", {"room": room, "role": role});

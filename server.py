@@ -119,8 +119,8 @@ def on_join_call(msg):
         hid = rdb.get("sid:{}".format(rid))
         if isinstance(hid, bytes):
             hid = hid.decode("utf-8")
-        emit('addPeer', {'peer_id': sid, 'your_id': hid, 'room_id': rid, 'should_create_offer': False}, room=hid, include_self=False)
-        emit('addPeer', {'peer_id': hid, 'your_id': sid, 'room_id': rid, 'should_create_offer': True})
+        emit('addPeer', {'peer_id': sid, 'your_id': hid, 'room_id': rid, 'should_create_offer': True}, room=hid, include_self=False)
+        emit('addPeer', {'peer_id': hid, 'your_id': sid, 'room_id': rid, 'should_create_offer': False})
 
 
 @socketio.on('relayICECandidate')
