@@ -5,6 +5,7 @@ import random
 import subprocess
 import threading
 import redis
+import json
 
 from google.cloud import speech
 from google.cloud.speech import enums
@@ -21,7 +22,7 @@ socketio = SocketIO(app)
 
 if "GOOGLE_APPLICATION_CREDENTIALS" in os.environ or "GOOGLE_JSON" in os.environ:
     if "GOOGLE_JSON" in os.environ:
-        credentials = service_account.Credentials.from_service_account_info(os.environ["GOOGLE_JSON"])
+        credentials = service_account.Credentials.from_service_account_info(json.loads(os.environ["GOOGLE_JSON"]))
         recog_client = speech.SpeechClient(credentials=credentials)
         translate_client = translate.Client(credentials=credentials)
     else:
