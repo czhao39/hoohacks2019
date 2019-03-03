@@ -59,7 +59,7 @@ def on_message(msg):
 
 
 def convert_audio(content):
-    return subprocess.check_output(["ffmpeg", "-f", "webm", "-i", "pipe:0", "-f", "flac", "pipe:1"], input=content)
+    return subprocess.check_output(["ffmpeg", "-f", "webm", "-i", "pipe:0", "-f", "flac", "pipe:1"], input=content, stderr=subprocess.DEVNULL)
 
 
 @socketio.on('connect')
