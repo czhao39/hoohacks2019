@@ -5,12 +5,21 @@ async function init(ws) {
     videoElement.play();
     const mediaRecorder = new MediaRecorder(stream, {
         audioBitsPerSecond: 16000,
-        mimeType: "audio/webm;codecs=opus"
+        mimeType: "audio/webm"
     });
-    mediaRecorder.ondataavailable = function(data) {
-        ws.emit('sound', data.data);
+    var chunks = [];
+    mediaRecorder.ondataavailable = function(e) {
+        chunks.push(e.data);
     };
-    mediaRecorder.start(500);
+    mediaRecorder.onstop = function() {
+        ws.emit('sound', new Blob(chunks));
+        chunks = [];
+        mediaRecorder.start();
+    };
+    mediaRecorder.start();
+    setInterval(function() {
+        mediaRecorder.stop();
+    }, 500);
 }
 
 $(document).ready(function() {
