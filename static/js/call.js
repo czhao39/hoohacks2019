@@ -21,7 +21,7 @@ function init(ws, callback) {
         $lang.change(function() {
             window.recog.stop();
             window.recog.lang = $lang.val();
-            window.setTimeout(function() { window.recog.start(); }, 200);
+            window.setTimeout(function() { window.recog.start(); }, 400);
         });
         window.recog.interimResults = true;
         window.recog.maxAlternatives = 1;
