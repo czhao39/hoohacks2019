@@ -23,16 +23,15 @@ app = Flask(__name__, static_url_path="")
 app.config['SECRET_KEY'] = os.urandom(24)
 socketio = SocketIO(app)
 
-recog_client = speech.SpeechClient()
-translate_client = translate.Client()
-recog_config = types.RecognitionConfig(
-                   encoding=enums.RecognitionConfig.AudioEncoding.FLAC,
-                   sample_rate_hertz=48000,
-                   language_code='en-US')
-streaming_config = types.StreamingRecognitionConfig(config=recog_config)
-
-
-redis = redis.Redis(host='localhost', port=6379, db=0)
+if "GOOGLE_APPLICATION_CREDENTIALS" in os.environ:
+    recog_client = speech.SpeechClient()
+    translate_client = translate.Client()
+    recog_config = types.RecognitionConfig(
+                       encoding=enums.RecognitionConfig.AudioEncoding.FLAC,
+                       sample_rate_hertz=48000,
+                       language_code='en-US')
+    streaming_config = types.StreamingRecognitionConfig(config=recog_config)
+    redis = redis.Redis(host='localhost', port=6379, db=0)
 
 
 @app.route("/")
@@ -62,7 +61,6 @@ def watch_landing():
 
 @socketio.on('sound')
 def on_message(msg):
-    # TODO: implement sound -> text, msg is webm audio in raw format
     flac = convert_audio(msg)
     sid = str(request.sid)
     if "init" not in session:
@@ -77,14 +75,11 @@ def convert_audio(content):
 
 @socketio.on('connect')
 def on_connect():
-    # TODO: add person to room
-    print("Socket Connected")
-
+    pass
 
 @socketio.on('disconnect')
 def on_disconnect():
-    # TODO: remove person from room
-    print("Socket Disconnected")
+    pass
 
 def transcribe_audio(stream):
     content = stream.read()
