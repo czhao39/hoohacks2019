@@ -1,1 +1,1 @@
-web: gunicorn -k eventlet server:app
+web: gunicorn -k eventlet --log-file=- server:app
