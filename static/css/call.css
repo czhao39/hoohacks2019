@@ -43,9 +43,11 @@
     display: flex;
     justify-content: space-between;
     margin-top: 3em;
+    margin-bottom: 1em;
 }
 
 .record-btn {
+    margin-top: -3em;
     margin-bottom: 2em;
 }
 
