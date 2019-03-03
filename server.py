@@ -70,6 +70,12 @@ def on_message(msg):
         redis.publish(sid, flac)
 
 
+@socketio.on('translate')
+def on_translate(msg):
+    output = translate_text(msg['text'], msg['lang'])
+    socketio.emit('translate', output)
+
+
 def convert_audio(content):
     return subprocess.check_output(["ffmpeg", "-f", "webm", "-i", "pipe:0", "-f", "flac", "pipe:1"], input=content, stderr=subprocess.DEVNULL)
 
