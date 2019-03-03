@@ -87,7 +87,7 @@ def on_connect():
 
 @socketio.on('sub')
 def on_broadcast_subtitle(msg):
-    emit('sub', msg["text"], room=msg["room"], include_self=False)
+    emit('sub', {"text": msg["text"], "isFinal": msg.get("isFinal", False)}, room=msg["room"], include_self=False)
 
 
 @socketio.on('join')

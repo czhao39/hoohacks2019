@@ -18,15 +18,16 @@ function init(ws, callback) {
         recog.onresult = function(e) {
             for (var i = e.resultIndex; i < e.results.length; ++i) {
                 var transcript = e.results[i][0].transcript;
-                if (e.results[i].isFinal) {
-                    showSubtitle(transcript, ws);
+                var isFinal = e.results[i].isFinal;
+                if (isFinal) {
+                    showSubtitle(transcript, ws, isFinal);
                     updateTranscriptRecorder(transcript);
                     tempString = "";
                 }
                 else {
                     if (tempString.length < transcript.length) {
                         tempString = transcript;
-                        showSubtitle(tempString, ws);
+                        showSubtitle(tempString, ws, isFinal);
                     }
                 }
             }
@@ -36,7 +37,7 @@ function init(ws, callback) {
     });
 }
 
-function showSubtitle(text, ws) {
+function showSubtitle(text, ws, isFinal) {
     if (text.length > 60) {
         $("#subtitle-text").css("font-size", "2em");
     }
@@ -51,7 +52,7 @@ function showSubtitle(text, ws) {
         ws.emit("translate", {"text": text, "lang": lang});
     }
     if (window.role == "host") {
-        ws.emit("sub", {"text": text, "room": window.room});
+        ws.emit("sub", {"text": text, "room": window.room, "isFinal": isFinal});
     }
 }
 
@@ -163,8 +164,11 @@ $(document).ready(function() {
 
         init(ws, finishFunction);
 
-        ws.on('sub', function(text) {
-            showSubtitle(text, ws);
+        ws.on('sub', function(obj) {
+            showSubtitle(obj.text, ws);
+            if (obj.isFinal) {
+                updateTranscriptRecorder(obj.text);
+            }
         });
 
         ws.on('translate', function(text) {
