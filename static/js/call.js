@@ -3,7 +3,10 @@ async function init(ws) {
     const videoElement = document.getElementById("self-video");
     videoElement.srcObject = stream;
     videoElement.play();
-    const mediaRecorder = new MediaRecorder(stream, {mimeType: "audio/webm"});
+    const mediaRecorder = new MediaRecorder(stream, {
+        audioBitsPerSecond: 16000,
+        mimeType: "audio/webm;codecs=opus"
+    });
     mediaRecorder.ondataavailable = function(data) {
         ws.emit('sound', data.data);
     };
