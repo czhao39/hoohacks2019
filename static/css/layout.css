@@ -24,3 +24,7 @@ a.brand-logo i {
 .input-field input[type=text]:focus {
     border-bottom: 1px solid #2962ff !important;
 }
+
+.dropdown-content li>span {
+    color: black;
+}

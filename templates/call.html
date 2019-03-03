@@ -10,6 +10,21 @@
 {% block content %}
     {{ super() }}
     <span class="event-msg">Event ID: <kbd>{{ event_id }}</kbd></span>
+    <span class="event-msg">Role: <kbd>{{ role }}</kbd></span>
+
+    {% if role == "watch" %}
+    <div class="input-field">
+        <select>
+            <option value="en-US">English</option>
+            <option value="de-DE">Deutsch</option>
+            <option value="es-ES">Español</option>
+            <option value="fr-FR">Français</option>
+            <option value="it-IT">Italiano</option>
+            <option value="zh">普通话 (中国大陆)</option>
+        </select>
+        <label>Subtitle Language</label>
+    </div>
+    {% endif %}
 
     <video id="self-video" />
 {% endblock %}

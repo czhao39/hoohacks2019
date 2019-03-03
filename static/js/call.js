@@ -27,4 +27,5 @@ $(document).ready(function() {
     ws.on('connect', function() {
         init(ws);
     });
+    $('select').formSelect();
 });

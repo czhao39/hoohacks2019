@@ -42,11 +42,11 @@ def host():
 
     call_id = "{}-{}-{}".format(random.choice(adjectives), random.choice(adjectives), random.choice(nouns))
 
-    return redirect("/call/" + call_id, code=302)
+    return redirect("/call/" + call_id + "?role=host", code=302)
 
 @app.route("/call/<call_id>")
 def call(call_id):
-    return render_template("call.html", event_id=call_id)
+    return render_template("call.html", event_id=call_id, role=request.args["role"])
 
 @app.route("/watch")
 def watch_landing():
