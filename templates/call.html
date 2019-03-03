@@ -11,7 +11,7 @@
     {{ super() }}
     <div class="connection-info">
         <div id="event-id">Event ID: <kbd>{{ event_id }}</kbd></div>
-        <div id="event-role">Role: <kbd>{{ role }}</kbd></div>
+        <div id="event-role"><i class="tiny material-icons" style="vertical-align:text-bottom">remove_red_eye</i> <span id="watcher-count">0</span> - Role: <kbd>{{ role }}</kbd></div>
     </div>
     {% if role == "host" %}
     <div class="center-align">

@@ -213,6 +213,10 @@ $(document).ready(function() {
             $("#subtitle-text").text(text);
         });
 
+        ws.on('watchers', function(data) {
+            $("#watcher-count").text(data);
+        });
+
         ws.on('videoControl', function(action) {
             if (action == "play") {
                 $("#self-video")[0].play();

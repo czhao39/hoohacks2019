@@ -119,6 +119,9 @@ def on_join_call(msg):
     session["room"] = rid
     sid = str(request.sid)
     join_room(rid)
+    watcher_key = "watchers:{}".format(rid)
+    rdb.incr(watcher_key)
+    emit('watchers', int(rdb.get(watcher_key)), room=rid, include_self=True)
     if msg["role"] == "host":
         rdb.set("sid:{}".format(rid), sid)
     else:
@@ -147,7 +150,10 @@ def on_relay_session(msg):
 
 @socketio.on('disconnect')
 def on_disconnect():
-    pass
+    if "room" in session:
+        watcher_key = "watchers:{}".format(session["room"])
+        rdb.decr(watcher_key)
+        emit('watchers', int(rdb.get(watcher_key)), room=session["room"], include_self=False)
 
 
 def transcribe_audio(stream):
