@@ -35,6 +35,8 @@ function init(ws, callback) {
         };
         recog.start();
         callback(stream);
+    }).catch(function(e) {
+        console.log("getUserMedia error: " + e);
     });
 }
 
