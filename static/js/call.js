@@ -29,6 +29,12 @@ async function init(ws) {
 }
 
 function showSubtitle(text) {
+    if (text.length > 60) {
+        $("#subtitle-text").css("font-size", "2em");
+    }
+    else {
+        $("#subtitle-text").css("font-size", "3em");
+    }
     $("#subtitle-text").text(text);
 }
 
