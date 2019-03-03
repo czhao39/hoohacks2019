@@ -202,7 +202,7 @@ $(document).ready(function() {
                 $("#self-video")[0].play();
             }
             else {
-                $("#self-video")[0].stop();
+                $("#self-video")[0].pause();
             }
         });
     });
