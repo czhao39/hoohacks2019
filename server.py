@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import json
 import sys
 import random
 import io
@@ -81,7 +82,7 @@ def convert_audio(content):
 
 @socketio.on('connect')
 def on_connect():
-    join_room(str(request.sid))
+    pass
 
 
 @socketio.on('broadcast')
@@ -92,26 +93,37 @@ def on_broadcast(msg):
 @socketio.on('join')
 def on_join(msg):
     rid = msg["room"]
+    sid = str(request.sid)
     join_room(rid)
     if msg["role"] == "host":
-        redis.set("sid:{}".format(rid), str(request.sid))
+        redis.set("sid:{}".format(rid), sid)
+    else:
+        hid = redis.get("sid:{}".format(rid))
+        if isinstance(hid, bytes):
+            hid = hid.decode("utf-8")
+        socketio.emit('addPeer', {'peer_id': sid, 'should_create_offer': False}, room=hid)
+        socketio.emit('addPeer', {'peer_id': hid, 'should_create_offer': True})
 
 
 @socketio.on('relayICECandidate')
 def on_ice_candidate(msg):
     peer_id = msg["peer_id"]
-    socketio.emit('iceCandidate', msg, room=peer_id)
+    if not isinstance(peer_id, str):
+        peer_id = peer_id.decode("utf-8")
+    socketio.emit('iceCandidate', {"peer_id": peer_id, "ice_candidate": msg["ice_candidate"]}, room=peer_id)
 
 
 @socketio.on('relaySessionDescription')
 def on_relay_session(msg):
     peer_id = msg["peer_id"]
-    socketio.emit('sessionDescription', msg, room=peer_id)
+    if not isinstance(peer_id, str):
+        peer_id = peer_id.decode("utf-8")
+    socketio.emit('sessionDescription', {"peer_id": peer_id, "session_description": json.loads(msg["session_description"])}, room=peer_id)
 
 
 @socketio.on('disconnect')
 def on_disconnect():
-    leave_room(str(request.sid))
+    pass
 
 
 def transcribe_audio(stream):
