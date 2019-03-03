@@ -66,7 +66,7 @@ function showSubtitle(text, ws, isFinal) {
     else {
         ws.emit("translate", {"text": text, "lang": lang});
     }
-    if (window.role == "host") {
+    if (window.role == "host" && !window.host_paused) {
         ws.emit("sub", {"text": text, "room": window.room, "isFinal": isFinal});
     }
 }
@@ -82,6 +82,7 @@ function updateTranscriptRecorder(text) {
 $(document).ready(function() {
     var peers = {};
 
+    window.host_paused = true;
     const ws = io(window.location.protocol + "//" + window.location.host + "/");
     ws.on('connect', function() {
         var role = $("#event-role kbd").text();
@@ -202,7 +203,20 @@ $(document).ready(function() {
     });
     $(window).resize(function() {
         resizeInterface();
-        $(".transcript-recorder").outerHeight($("#self-video").outerHeight());
     });
     resizeInterface();
+
+    var $recordBtn = $(".record-btn");
+    $recordBtn.click(function() {
+        window.host_paused = !window.host_paused;
+        if (window.host_paused) {
+            $recordBtn.removeClass("red");
+            $recordBtn.addClass("blue-grey");
+            $recordBtn.removeClass("pulse");
+        } else {
+            $recordBtn.removeClass("blue-grey");
+            $recordBtn.addClass("red");
+            $recordBtn.addClass("pulse");
+        }
+    });
 });

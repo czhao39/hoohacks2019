@@ -13,9 +13,11 @@
         <div id="event-id">Event ID: <kbd>{{ event_id }}</kbd></div>
         <div id="event-role">Role: <kbd>{{ role }}</kbd></div>
     </div>
+    {% if role == "host" %}
     <div class="center-align">
-        <a class="record-btn btn-floating btn-large waves-effect waves-light red pulse"><i class="material-icons">speaker_phone</i></a>
+        <a class="record-btn btn-floating btn-large waves-effect waves-light blue-grey"><i class="material-icons">speaker_phone</i></a>
     </div>
+    {% endif %}
 
     <div id="language-wrapper" class="input-field">
         <select id="language">
