@@ -59,8 +59,11 @@ def on_message(msg):
     flac = convert_audio(msg)
     if "audio_buffer" not in g:
         g.audio_buffer = deque()
-    g.audio_buffer.appendleft(flac)
-    print(transcribe_streaming())
+    g.audio_buffer.append(flac)
+    try:
+        print(transcribe_streaming())
+    except:
+        return
 
 def convert_audio(content):
     return subprocess.check_output(["ffmpeg", "-f", "webm", "-i", "pipe:0", "-f", "flac", "pipe:1"], input=content, stderr=subprocess.DEVNULL)
@@ -83,12 +86,24 @@ def transcribe_audio(stream):
     text = [res.alternatives[0].transcript for res in response.results]
     return text
 
+def audio_generator():
+    for chunk in g.audio_buffer:
+        yield chunk
+
 def transcribe_streaming():
-    audio_generator = (chunk for chunk in g.audio_buffer.pop())
     requests = (types.StreamingRecognizeRequest(audio_content=content)
-                for content in audio_generator)
+                for content in audio_generator())
     responses = recog_client.streaming_recognize(streaming_config, requests)
-    return [res.alternatives[0].transcript for res in responses.results if res.is_final]
+    transcript = []
+    print("lol")
+    for response in responses:
+        print("yo")
+        print(response)
+        if response.results[0].is_final:
+            transcript.append(response.results[0].alternatives[0].transcript)
+    # return [response.results[0].alternatives[0].transcript for response in responses if response.results[0].is_final]
+    print("derp")
+    return transcript
 
 def translate_text(text, target_lang):
     translation = translate_client.translate(text, target_language=target_lang)
