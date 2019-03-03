@@ -5,15 +5,23 @@ async function init(ws) {
     videoElement.play();
 
     var recog = new webkitSpeechRecognition();
+    var tempString = "";
     recog.lang = "en-US";
-    recog.interimResults = false;
+    recog.interimResults = true;
     recog.maxAlternatives = 1;
     recog.continuous = true;
     recog.onresult = function(e) {
         for (var i = e.resultIndex; i < e.results.length; ++i) {
+            var transcript = e.results[i][0].transcript;
             if (e.results[i].isFinal) {
-                var transcript = e.results[i][0].transcript;
                 showSubtitle(transcript);
+                tempString = "";
+            }
+            else {
+                if (tempString.length < transcript.length) {
+                    tempString = transcript;
+                    showSubtitle(tempString);
+                }
             }
         }
     };
