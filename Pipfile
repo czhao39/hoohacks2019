@@ -11,6 +11,7 @@ pylint = "*"
 flask = "*"
 flask-socketio = "*"
 google-cloud-translate = "*"
+redis = "*"
 
 [requires]
 python_version = "3.7"

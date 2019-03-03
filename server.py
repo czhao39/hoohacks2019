@@ -4,7 +4,11 @@ import os
 import sys
 import random
 import io
+import time
 import subprocess
+import threading
+import redis
+
 from collections import deque
 
 from google.cloud import speech
@@ -26,6 +30,9 @@ recog_config = types.RecognitionConfig(
                    sample_rate_hertz=48000,
                    language_code='en-US')
 streaming_config = types.StreamingRecognitionConfig(config=recog_config)
+
+
+redis = redis.Redis(host='localhost', port=6379, db=0)
 
 
 @app.route("/")
@@ -57,13 +64,13 @@ def watch_landing():
 def on_message(msg):
     # TODO: implement sound -> text, msg is webm audio in raw format
     flac = convert_audio(msg)
-    if "audio_buffer" not in g:
-        g.audio_buffer = deque()
-    g.audio_buffer.append(flac)
-    try:
-        print(transcribe_streaming())
-    except:
-        return
+    sid = str(request.sid)
+    if "init" not in session:
+        session["init"] = True
+        threading.Thread(target=transcribe_streaming, args=(sid, flac)).start()
+    else:
+        redis.publish(sid, flac)
+
 
 def convert_audio(content):
     return subprocess.check_output(["ffmpeg", "-f", "webm", "-i", "pipe:0", "-f", "flac", "pipe:1"], input=content, stderr=subprocess.DEVNULL)
@@ -86,24 +93,24 @@ def transcribe_audio(stream):
     text = [res.alternatives[0].transcript for res in response.results]
     return text
 
-def audio_generator():
-    for chunk in g.audio_buffer:
-        yield chunk
+def audio_generator(sid, flac):
+    p = redis.pubsub()
+    p.subscribe(sid)
+    yield flac
+    for message in p.listen():
+        info = message["data"]
+        if not isinstance(info, int):
+            yield info
 
-def transcribe_streaming():
+def transcribe_streaming(sid, flac):
     requests = (types.StreamingRecognizeRequest(audio_content=content)
-                for content in audio_generator())
+                for content in audio_generator(sid, flac))
     responses = recog_client.streaming_recognize(streaming_config, requests)
     transcript = []
-    print("lol")
     for response in responses:
-        print("yo")
-        print(response)
         if response.results[0].is_final:
+            print(response.results[0].alternatives[0].transcript)
             transcript.append(response.results[0].alternatives[0].transcript)
-    # return [response.results[0].alternatives[0].transcript for response in responses if response.results[0].is_final]
-    print("derp")
-    return transcript
 
 def translate_text(text, target_lang):
     translation = translate_client.translate(text, target_language=target_lang)
