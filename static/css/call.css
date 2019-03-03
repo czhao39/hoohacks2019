@@ -30,3 +30,9 @@
 .event-msg kbd {
     color: black;
 }
+
+#language-wrapper {
+    right: 15px;
+    bottom: 0;
+    position: fixed;
+}

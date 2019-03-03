@@ -12,19 +12,17 @@
     <span class="event-msg" style="float:left">Event ID: <kbd>{{ event_id }}</kbd></span>
     <span class="event-msg" style="float:right">Role: <kbd>{{ role }}</kbd></span>
 
-    {% if role == "watch" %}
-    <div class="input-field">
+    <div id="language-wrapper" class="input-field">
         <select id="language">
-            <option value="en-US">English</option>
-            <option value="de-DE">Deutsch</option>
-            <option value="es-ES">Español</option>
-            <option value="fr-FR">Français</option>
-            <option value="it-IT">Italiano</option>
+            <option value="en">English</option>
+            <option value="de">Deutsch</option>
+            <option value="es">Español</option>
+            <option value="fr">Français</option>
+            <option value="it">Italiano</option>
             <option value="zh">普通话 (中国大陆)</option>
         </select>
         <label>Subtitle Language</label>
     </div>
-    {% endif %}
 
     <div id="video-container">
         <video id="self-video"></video>
