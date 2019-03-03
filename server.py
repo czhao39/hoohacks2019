@@ -5,6 +5,7 @@ import sys
 import random
 import io
 import subprocess
+from collections import deque
 
 from google.cloud import speech
 from google.cloud.speech import enums
@@ -56,11 +57,13 @@ def watch_landing():
 def on_message(msg):
     # TODO: implement sound -> text, msg is webm audio in raw format
     flac = convert_audio(msg)
-
+    if "audio_buffer" not in g:
+        g.audio_buffer = deque()
+    g.audio_buffer.appendleft(flac)
+    print(transcribe_streaming())
 
 def convert_audio(content):
     return subprocess.check_output(["ffmpeg", "-f", "webm", "-i", "pipe:0", "-f", "flac", "pipe:1"], input=content, stderr=subprocess.DEVNULL)
-
 
 @socketio.on('connect')
 def on_connect():
@@ -80,7 +83,8 @@ def transcribe_audio(stream):
     text = [res.alternatives[0].transcript for res in response.results]
     return text
 
-def transcribe_streaming(audio_generator):
+def transcribe_streaming():
+    audio_generator = (chunk for chunk in g.audio_buffer.pop())
     requests = (types.StreamingRecognizeRequest(audio_content=content)
                 for content in audio_generator)
     responses = recog_client.streaming_recognize(streaming_config, requests)
