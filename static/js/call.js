@@ -17,6 +17,12 @@ function init(ws, callback) {
         window.recog = new webkitSpeechRecognition();
         var tempString = "";
         window.recog.lang = "en-US";
+        var $lang = $("#language");
+        $lang.change(function() {
+            window.recog.stop();
+            window.recog.lang = $lang.val();
+            window.setTimeout(function() { window.recog.start(); }, 200);
+        });
         window.recog.interimResults = true;
         window.recog.maxAlternatives = 1;
         window.recog.continuous = true;
@@ -60,12 +66,7 @@ function showSubtitle(text, ws, isFinal) {
         $("#subtitle-text").css("font-size", "3em");
     }
     var lang = $("#language").val();
-    if (lang == "en") {
-        $("#subtitle-text").text(text);
-    }
-    else {
-        ws.emit("translate", {"text": text, "lang": lang});
-    }
+    ws.emit("translate", {"text": text, "lang": lang});
     if (window.role == "host" && !window.host_paused) {
         ws.emit("sub", {"text": text, "room": window.room, "isFinal": isFinal});
     }
