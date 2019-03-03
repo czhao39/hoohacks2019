@@ -39,7 +39,12 @@ function init(ws, callback) {
         recog.start();
         callback(stream);
     }).catch(function(e) {
-        console.log("getUserMedia error: " + e);
+        if (window.location.protocol === "http:" && window.location.hostname.indexOf("localhost") !== 0) {
+            location.href = "https:" + window.location.href.substring(window.location.protocol.length);
+        }
+        else {
+            console.log("getUserMedia error: " + e);
+        }
     });
 }
 
