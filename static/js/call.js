@@ -1,5 +1,10 @@
 function init(ws, callback) {
     navigator.mediaDevices.getUserMedia({ audio: true, video: true }).then(function(stream) {
+        if (window.role !== "host") {
+            callback(stream);
+            return;
+        }
+
         const videoElement = document.getElementById("self-video");
         videoElement.srcObject = stream;
         videoElement.play();
@@ -85,14 +90,14 @@ $(document).ready(function() {
                 };
 
                 conn.onaddstream = function(e) {
-                    var vid = $("#self-video");
-                    vid.attr("autoplay", "autoplay").attr("controls", "");
-                    vid[0].srcObject = e.stream;
+                    if (window.role !== "host") {
+                        var vid = $("#self-video");
+                        vid.prop("autoplay", true).prop("controls", false);
+                        vid[0].srcObject = e.stream;
+                    }
                 };
 
-                if (role == "host") {
-                    conn.addStream(stream);
-                }
+                conn.addStream(stream);
 
                 if (msg.should_create_offer) {
                     conn.createOffer(function (local_description) {
@@ -149,15 +154,11 @@ $(document).ready(function() {
             ws.emit("join", {"room": room, "role": role});
         };
 
-        if (role == "host") {
-            init(ws, finishFunction);
-        }
-        else {
-            ws.on('sub', function(text) {
-                showSubtitle(text, ws);
-            });
-            finishFunction(null);
-        }
+        init(ws, finishFunction);
+
+        ws.on('sub', function(text) {
+            showSubtitle(text, ws);
+        });
 
         ws.on('translate', function(text) {
             $("#subtitle-text").text(text);
