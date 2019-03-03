@@ -17,7 +17,7 @@ from google.cloud.speech import types
 from google.cloud import translate
 
 from flask import *
-from flask_socketio import SocketIO
+from flask_socketio import SocketIO, join_room, leave_room
 
 app = Flask(__name__, static_url_path="")
 app.config['SECRET_KEY'] = os.urandom(24)
@@ -52,7 +52,7 @@ def host():
 
 @app.route("/call/<call_id>")
 def call(call_id):
-    return render_template("call.html", event_id=call_id, role=request.args["role"])
+    return render_template("call.html", event_id=call_id, role=request.args.get("role", "watch"))
 
 @app.route("/watch")
 def watch_landing():
@@ -81,11 +81,38 @@ def convert_audio(content):
 
 @socketio.on('connect')
 def on_connect():
-    pass
+    join_room(str(request.sid))
+
+
+@socketio.on('broadcast')
+def on_broadcast(msg):
+    socketio.to(msg["room"]).emit('broadcast', msg["text"])
+
+
+@socketio.on('join')
+def on_join(msg):
+    rid = msg["room"]
+    join_room(rid)
+    if msg["role"] == "host":
+        redis.set("sid:{}".format(rid), str(socketio.sid))
+
+
+@socketio.on('relayICECandidate')
+def on_ice_candidate(msg):
+    peer_id = msg["peer_id"]
+    socketio.to(peer_id).emit('iceCandidate', msg)
+
+
+@socketio.on('relaySessionDescription')
+def on_relay_session(msg):
+    peer_id = msg["peer_id"]
+    socketio.to(peer_id).emit('sessionDescription', msg)
+
 
 @socketio.on('disconnect')
 def on_disconnect():
-    pass
+    leave_room(str(request.sid))
+
 
 def transcribe_audio(stream):
     content = stream.read()

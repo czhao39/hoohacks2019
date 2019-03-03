@@ -9,8 +9,8 @@
 
 {% block content %}
     {{ super() }}
-    <span class="event-msg" style="float:left">Event ID: <kbd>{{ event_id }}</kbd></span>
-    <span class="event-msg" style="float:right">Role: <kbd>{{ role }}</kbd></span>
+    <span class="event-msg" style="float:left">Event ID: <kbd id="event-id">{{ event_id }}</kbd></span>
+    <span class="event-msg" style="float:right">Role: <kbd id="event-role">{{ role }}</kbd></span>
 
     <div id="language-wrapper" class="input-field">
         <select id="language">

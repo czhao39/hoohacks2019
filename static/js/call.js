@@ -42,12 +42,28 @@ function showSubtitle(text, ws) {
     else {
         ws.emit("translate", {"text": text, "lang": lang});
     }
+    if (window.role == "host") {
+        ws.emit("broadcast", {"text": text, "room": window.room});
+    }
 }
 
 $(document).ready(function() {
     const ws = io("http://" + window.location.host + "/");
     ws.on('connect', function() {
-        init(ws);
+        var role = $("#event-role").text();
+        var room = $("#event-id").text();
+        window.role = role;
+        window.room = room;
+        ws.emit("join", {"room": room, "role": role});
+
+        if (role == "host") {
+            init(ws);
+        }
+        else {
+            ws.on('broadcast', function(text) {
+                showSubtitle(text, ws);
+            });
+        }
 
         ws.on('translate', function(text) {
             $("#subtitle-text").text(text);
