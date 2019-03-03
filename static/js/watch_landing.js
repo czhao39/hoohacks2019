@@ -3,7 +3,14 @@ $(document).ready(function() {
         e.preventDefault();
         var call_id = $("#event_id").val();
         if (call_id) {
-            window.location.href = "/call/" + call_id + "?role=watch";
+            $.get("/check?room=" + encodeURIComponent(call_id), function(data) {
+                if (data.exists) {
+                    window.location.href = "/call/" + call_id + "?role=watch";
+                }
+                else {
+                    M.toast({html: "No session exists with that event ID!"});
+                }
+            });
         }
     });
 

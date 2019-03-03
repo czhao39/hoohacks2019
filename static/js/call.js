@@ -44,7 +44,15 @@ function init(ws, callback) {
             }
         };
         window.recog.onerror = function(e) {
-            console.log("SpeechRecognition error: " + e.error);
+            if (e.error === "network") {
+                M.toast({
+                    html: "Network error while connecting to text-to-speech server!",
+                    classes: "red lighten-2"
+                });
+            }
+            else {
+                console.log("SpeechRecognition error: " + e.error);
+            }
         };
         window.recog.start();
         callback(stream);

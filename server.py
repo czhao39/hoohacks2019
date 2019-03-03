@@ -13,7 +13,7 @@ from google.cloud.speech import types
 from google.cloud import translate
 from google.oauth2 import service_account
 
-from flask import Flask, redirect, render_template, request, session
+from flask import Flask, redirect, render_template, request, session, jsonify
 from flask_socketio import SocketIO, join_room, emit
 
 app = Flask(__name__, static_url_path="")
@@ -68,6 +68,12 @@ def call(call_id):
 @app.route("/watch")
 def watch_landing():
     return render_template("watch_landing.html")
+
+
+@app.route("/check")
+def check_room():
+    room = request.args.get("room", "").lower()
+    return jsonify({"exists": bool(rdb.get("sid:{}".format(room)))})
 
 
 @socketio.on('sound')
