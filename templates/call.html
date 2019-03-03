@@ -10,8 +10,8 @@
 {% block content %}
     {{ super() }}
     <div class="connection-info">
-        <div class="event-id">Event ID: <kbd>{{ event_id }}</kbd></div>
-        <div class="event-role">Role: <kbd>{{ role }}</kbd></div>
+        <div id="event-id">Event ID: <kbd>{{ event_id }}</kbd></div>
+        <div id="event-role">Role: <kbd>{{ role }}</kbd></div>
     </div>
 
     <div id="language-wrapper" class="input-field">

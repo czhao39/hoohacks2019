@@ -55,8 +55,8 @@ function updateTranscriptRecorder(text) {
 $(document).ready(function() {
     const ws = io("http://" + window.location.host + "/");
     ws.on('connect', function() {
-        var role = $("#event-role").text();
-        var room = $("#event-id").text();
+        var role = $("#event-role kbd").text();
+        var room = $("#event-id kbd").text();
         window.role = role;
         window.room = room;
         ws.emit("join", {"room": room, "role": role});

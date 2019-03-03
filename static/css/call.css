@@ -24,7 +24,6 @@
 .connection-info {
     display: flex;
     justify-content: space-between;
-    color: grey;
     margin-top: 1em;
     margin-bottom: 1em;
 }
