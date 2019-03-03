@@ -40,7 +40,6 @@
 }
 
 .transcript-recorder {
-    max-height: 700px;
     overflow-y: auto;
     font-size: 1.5em;
     margin: 0;
