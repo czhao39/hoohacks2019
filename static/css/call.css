@@ -21,10 +21,15 @@
     word-wrap: break-word;
 }
 
-.event-msg {
-    display: block;
-    color: grey;
-    margin: 10px 0px;
+.connection-info {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3em;
+}
+
+.record-btn {
+    margin-top: -1em;
+    margin-bottom: 2em;
 }
 
 .event-msg kbd {
@@ -35,4 +40,14 @@
     right: 15px;
     bottom: 0;
     position: fixed;
+}
+
+.transcript-recorder {
+    overflow-y: auto;
+    font-size: 1.5em;
+    margin: 0;
+}
+
+.transcript-recorder blockquote {
+    margin: 10px 0;
 }

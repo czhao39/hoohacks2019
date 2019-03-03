@@ -9,8 +9,13 @@
 
 {% block content %}
     {{ super() }}
-    <span class="event-msg" style="float:left">Event ID: <kbd id="event-id">{{ event_id }}</kbd></span>
-    <span class="event-msg" style="float:right">Role: <kbd id="event-role">{{ role }}</kbd></span>
+    <div class="connection-info">
+        <div id="event-id">Event ID: <kbd>{{ event_id }}</kbd></div>
+        <div id="event-role">Role: <kbd>{{ role }}</kbd></div>
+    </div>
+    <div class="center-align">
+        <a class="record-btn btn-floating btn-large waves-effect waves-light red pulse"><i class="material-icons">speaker_phone</i></a>
+    </div>
 
     <div id="language-wrapper" class="input-field">
         <select id="language">
@@ -21,11 +26,24 @@
             <option value="it">Italiano</option>
             <option value="zh">普通话 (中国大陆)</option>
         </select>
+        {% if role == "host" %}
+        <label>Speech Language</label>
+        {% else %}
         <label>Subtitle Language</label>
+        {% endif %}
     </div>
 
-    <div id="video-container">
-        <video id="self-video"></video>
-        <div id="subtitle-text"></div>
+    <div class="row">
+        <div class="col s12 l8">
+            <div id="video-container">
+                <video id="self-video"></video>
+                <div id="subtitle-text"></div>
+            </div>
+        </div>
+        <div class="col s12 l4 transcript-recorder-wrapper">
+            <div class="card-panel white transcript-recorder">
+                <h4 class="center-align"><u>Transcript</u></h4>
+            </div>
+        </div>
     </div>
 {% endblock %}

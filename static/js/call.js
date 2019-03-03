@@ -54,13 +54,19 @@ function showSubtitle(text, ws) {
     }
 }
 
+function updateTranscriptRecorder(text) {
+    var $block = $("<blockquote>" + text + "</blockquote>").appendTo($(".transcript-recorder"));
+    $block.css("backgroundColor", "yellow");
+    $block.animate({backgroundColor: "white"}, 500);
+}
+
 $(document).ready(function() {
     var peers = {};
 
     const ws = io("http://" + window.location.host + "/");
     ws.on('connect', function() {
-        var role = $("#event-role").text();
-        var room = $("#event-id").text();
+        var role = $("#event-role kbd").text();
+        var room = $("#event-id kbd").text();
         window.role = role;
         window.room = room;
 
@@ -165,4 +171,10 @@ $(document).ready(function() {
         });
     });
     $('select').formSelect();
+    $("#self-video").resize(function() {
+        $(".transcript-recorder").outerHeight($("#self-video").outerHeight());
+    });
+    $(window).resize(function() {
+        $(".transcript-recorder").outerHeight($("#self-video").outerHeight());
+    });
 });
