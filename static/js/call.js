@@ -33,6 +33,9 @@ function init(ws, callback) {
                 }
             }
         };
+        recog.onerror = function(e) {
+            console.log("SpeechRecognition error: " + e.error);
+        };
         recog.start();
         callback(stream);
     }).catch(function(e) {
