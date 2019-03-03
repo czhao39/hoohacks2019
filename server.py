@@ -29,7 +29,10 @@ if "GOOGLE_APPLICATION_CREDENTIALS" in os.environ:
     streaming_config = types.StreamingRecognitionConfig(config=recog_config)
 
 
-rdb = redis.Redis(host='localhost', port=6379, db=0)
+if "REDIS_URL" in os.environ:
+    rdb = redis.from_url(os.environ.get("REDIS_URL"))
+else:
+    rdb = redis.Redis(host='localhost', port=6379, db=0)
 
 
 @app.route("/")
