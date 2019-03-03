@@ -82,7 +82,7 @@ function updateTranscriptRecorder(text) {
 $(document).ready(function() {
     var peers = {};
 
-    window.host_paused = true;
+    window.host_paused = false;
     const ws = io(window.location.protocol + "//" + window.location.host + "/");
     ws.on('connect', function() {
         var role = $("#event-role kbd").text();
@@ -207,16 +207,26 @@ $(document).ready(function() {
     resizeInterface();
 
     var $recordBtn = $(".record-btn");
-    $recordBtn.click(function() {
-        window.host_paused = !window.host_paused;
+    var $videoEle = $("#self-video");
+
+    function updateRecordButtonState() {
         if (window.host_paused) {
             $recordBtn.removeClass("red");
             $recordBtn.addClass("blue-grey");
             $recordBtn.removeClass("pulse");
+            $videoEle[0].pause();
         } else {
             $recordBtn.removeClass("blue-grey");
             $recordBtn.addClass("red");
             $recordBtn.addClass("pulse");
+            $videoEle[0].play();
         }
+    }
+
+    $recordBtn.click(function() {
+        window.host_paused = !window.host_paused;
+        updateRecordButtonState();
     });
+
+    updateRecordButtonState();
 });
