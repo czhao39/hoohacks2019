@@ -3,38 +3,25 @@ async function init(ws) {
     const videoElement = document.getElementById("self-video");
     videoElement.srcObject = stream;
     videoElement.play();
-    // const mediaRecorder = new MediaRecorder(stream, {
-    //     audioBitsPerSecond: 16000,
-    //     mimeType: "audio/webm"
-    // });
-    // var chunks = [];
-    // mediaRecorder.ondataavailable = function(e) {
-    //     chunks.push(e.data);
-    // };
-    // mediaRecorder.onstop = function() {
-    //     ws.emit('sound', new Blob(chunks));
-    //     chunks = [];
-    //     mediaRecorder.start();
-    // };
-    // mediaRecorder.start();
-    // setInterval(function() {
-    //     mediaRecorder.stop();
-    // }, 500);
+
     var recog = new webkitSpeechRecognition();
     recog.lang = "en-US";
     recog.interimResults = false;
     recog.maxAlternatives = 1;
     recog.continuous = true;
-    recog.onresult = function(event) {
-        for (var i = event.resultIndex; i < event.results.length; ++i) {
-            if (event.results[i].isFinal) {
-                transcript = event.results[i][0].transcript;
-                console.log(transcript);
-                ws.emit("text", transcript);
+    recog.onresult = function(e) {
+        for (var i = e.resultIndex; i < e.results.length; ++i) {
+            if (e.results[i].isFinal) {
+                var transcript = e.results[i][0].transcript;
+                showSubtitle(transcript);
             }
         }
-    }
+    };
     recog.start();
+}
+
+function showSubtitle(text) {
+    $("#subtitle-text").text(text);
 }
 
 $(document).ready(function() {

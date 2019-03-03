@@ -9,12 +9,12 @@
 
 {% block content %}
     {{ super() }}
-    <span class="event-msg">Event ID: <kbd>{{ event_id }}</kbd></span>
-    <span class="event-msg">Role: <kbd>{{ role }}</kbd></span>
+    <span class="event-msg" style="float:left">Event ID: <kbd>{{ event_id }}</kbd></span>
+    <span class="event-msg" style="float:right">Role: <kbd>{{ role }}</kbd></span>
 
     {% if role == "watch" %}
     <div class="input-field">
-        <select>
+        <select id="language">
             <option value="en-US">English</option>
             <option value="de-DE">Deutsch</option>
             <option value="es-ES">Español</option>
@@ -26,5 +26,8 @@
     </div>
     {% endif %}
 
-    <video id="self-video" />
+    <div id="video-container">
+        <video id="self-video"></video>
+        <div id="subtitle-text"></div>
+    </div>
 {% endblock %}
