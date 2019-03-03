@@ -3,13 +3,23 @@
 {% block head %}
     {{ super() }}
     <link rel="stylesheet" href="/css/landing.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.5.0/velocity.min.js" integrity="sha256-/IeNFU9g1Tnj9pOKq3jGgIU2/kiKS+t1Q7pwym7mpoA=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.5.0/velocity.ui.min.js" integrity="sha256-sy9XDO27Le9UKdsCaEwGdSqPWH2KCljZoREdFiuz14E=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="/js/landing.js"></script>
 {% endblock %}
 
 {% block content %}
     {{ super() }}
     <div class="middle-content-wrapper">
-        <h1>Welcome to Panscribe!</h1>
-        <a id="host-btn" class="waves-effect waves-light btn-large" href="/host">Host</a>
-        <a id="watch-btn" class="waves-effect waves-light btn-large" href="/watch">Watch</a>
+        <div class="animation-group">
+            <h1>Welcome to Panscribe!</h1>
+        </div>
+        <div class="animation-group">
+            <h5>Transcribe video live streams in real time, <span style="font-weight:600;font-style:italic;">from</span> any language, <span style="font-weight:600;font-style:italic;">to</span> any language.</h5>
+        </div>
+        <div class="animation-group">
+            <a id="host-btn" class="waves-effect waves-light btn-large" href="/host">Host</a>
+            <a id="watch-btn" class="waves-effect waves-light btn-large" href="/watch">Watch</a>
+        </div>
     </div>
 {% endblock %}
