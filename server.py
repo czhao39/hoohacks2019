@@ -10,6 +10,7 @@ from google.cloud import speech
 from google.cloud.speech import enums
 from google.cloud.speech import types
 from google.cloud import translate
+from google.oauth2 import service_account
 
 from flask import Flask, redirect, render_template, request, session
 from flask_socketio import SocketIO, join_room, emit
@@ -18,9 +19,14 @@ app = Flask(__name__, static_url_path="")
 app.config['SECRET_KEY'] = os.urandom(24)
 socketio = SocketIO(app)
 
-if "GOOGLE_APPLICATION_CREDENTIALS" in os.environ:
-    recog_client = speech.SpeechClient()
-    translate_client = translate.Client()
+if "GOOGLE_APPLICATION_CREDENTIALS" in os.environ or "GOOGLE_JSON" in os.environ:
+    if "GOOGLE_JSON" in os.environ:
+        credentials = service_account.Credentials.from_service_account_info(os.environ["GOOGLE_JSON"])
+        recog_client = speech.SpeechClient(credentials=credentials)
+        translate_client = translate.Client(credentials=credentials)
+    else:
+        recog_client = speech.SpeechClient()
+        translate_client = translate.Client()
     recog_config = types.RecognitionConfig(
         encoding=enums.RecognitionConfig.AudioEncoding.FLAC,
         sample_rate_hertz=48000,
