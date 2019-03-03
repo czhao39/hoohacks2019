@@ -21,10 +21,12 @@
     word-wrap: break-word;
 }
 
-.event-msg {
-    display: block;
+.connection-info {
+    display: flex;
+    justify-content: space-between;
     color: grey;
-    margin: 10px 0px;
+    margin-top: 1em;
+    margin-bottom: 1em;
 }
 
 .event-msg kbd {
@@ -35,4 +37,11 @@
     right: 15px;
     bottom: 0;
     position: fixed;
+}
+
+.transcript-recorder {
+    max-height: 700px;
+    overflow-y: auto;
+    font-size: 1.5em;
+    margin: 0;
 }

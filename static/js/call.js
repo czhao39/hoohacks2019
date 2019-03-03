@@ -15,6 +15,7 @@ async function init(ws) {
             var transcript = e.results[i][0].transcript;
             if (e.results[i].isFinal) {
                 showSubtitle(transcript, ws);
+                updateTranscriptRecorder(transcript);
                 tempString = "";
             }
             else {
@@ -47,6 +48,10 @@ function showSubtitle(text, ws) {
     }
 }
 
+function updateTranscriptRecorder(text) {
+    $(".transcript-recorder").append("<div>" + text + "</div>");
+}
+
 $(document).ready(function() {
     const ws = io("http://" + window.location.host + "/");
     ws.on('connect', function() {
@@ -70,4 +75,10 @@ $(document).ready(function() {
         });
     });
     $('select').formSelect();
+    $("#self-video").resize(function() {
+        $(".transcript-recorder").outerHeight($("#self-video").outerHeight());
+    });
+    $(window).resize(function() {
+        $(".transcript-recorder").outerHeight($("#self-video").outerHeight());
+    });
 });
