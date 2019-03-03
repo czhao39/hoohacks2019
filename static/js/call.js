@@ -20,6 +20,7 @@ function init(ws, callback) {
                 var transcript = e.results[i][0].transcript;
                 if (e.results[i].isFinal) {
                     showSubtitle(transcript, ws);
+                    updateTranscriptRecorder(transcript);
                     tempString = "";
                 }
                 else {
@@ -55,7 +56,7 @@ function showSubtitle(text, ws) {
 }
 
 function updateTranscriptRecorder(text) {
-    var $block = $("<blockquote>" + text + "</blockquote>").appendTo($(".transcript-recorder"));
+    var $block = $("<blockquote>" + $("<div />").text(text).html() + "</blockquote>").appendTo($(".transcript-recorder"));
     $block.css("backgroundColor", "yellow");
     $block.animate({backgroundColor: "white"}, 500);
 }
