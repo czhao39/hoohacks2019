@@ -196,6 +196,15 @@ $(document).ready(function() {
         ws.on('translate', function(text) {
             $("#subtitle-text").text(text);
         });
+
+        ws.on('videoControl', function(action) {
+            if (action == "play") {
+                $("#self-video")[0].play();
+            }
+            else {
+                $("#self-video")[0].stop();
+            }
+        });
     });
     $('select').formSelect();
     $("#self-video").resize(function() {
@@ -215,11 +224,13 @@ $(document).ready(function() {
             $recordBtn.addClass("blue-grey");
             $recordBtn.removeClass("pulse");
             $videoEle[0].pause();
+            ws.emit('videoControl', 'pause');
         } else {
             $recordBtn.removeClass("blue-grey");
             $recordBtn.addClass("red");
             $recordBtn.addClass("pulse");
             $videoEle[0].play();
+            ws.emit('videoControl', 'play');
         }
     }
 

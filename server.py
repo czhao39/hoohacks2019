@@ -87,6 +87,12 @@ def on_translate(msg):
     emit('translate', output)
 
 
+@socketio.on('videoControl')
+def on_video_control(msg):
+    if "room" in session:
+        emit('videoControl', msg, room=session["room"], include_self=False)
+
+
 def convert_audio(content):
     return subprocess.check_output(["ffmpeg", "-f", "webm", "-i", "pipe:0", "-f", "flac", "pipe:1"], input=content, stderr=subprocess.DEVNULL)
 
@@ -104,6 +110,7 @@ def on_broadcast_subtitle(msg):
 @socketio.on('join')
 def on_join_call(msg):
     rid = msg["room"]
+    session["room"] = rid
     sid = str(request.sid)
     join_room(rid)
     if msg["role"] == "host":
