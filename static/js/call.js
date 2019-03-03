@@ -1,3 +1,7 @@
+function resizeInterface() {
+    $(".transcript-recorder").outerHeight($("#self-video").outerHeight());
+}
+
 function init(ws, callback) {
     navigator.mediaDevices.getUserMedia({ audio: true, video: true }).then(function(stream) {
         if (window.role !== "host") {
@@ -84,6 +88,10 @@ $(document).ready(function() {
         var room = $("#event-id kbd").text();
         window.role = role;
         window.room = room;
+
+        if (window.role !== "host") {
+            $('.record-btn').hide();
+        }
 
         const finishFunction = function(stream) {
             ws.on('addPeer', function(msg) {
@@ -190,9 +198,11 @@ $(document).ready(function() {
     });
     $('select').formSelect();
     $("#self-video").resize(function() {
-        $(".transcript-recorder").outerHeight($("#self-video").outerHeight());
+        resizeInterface();
     });
     $(window).resize(function() {
+        resizeInterface();
         $(".transcript-recorder").outerHeight($("#self-video").outerHeight());
     });
+    resizeInterface();
 });
