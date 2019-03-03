@@ -86,7 +86,7 @@ def on_connect():
 
 @socketio.on('broadcast')
 def on_broadcast(msg):
-    socketio.to(msg["room"]).emit('broadcast', msg["text"])
+    socketio.emit('broadcast', msg["text"], room=msg["room"])
 
 
 @socketio.on('join')
@@ -94,19 +94,19 @@ def on_join(msg):
     rid = msg["room"]
     join_room(rid)
     if msg["role"] == "host":
-        redis.set("sid:{}".format(rid), str(socketio.sid))
+        redis.set("sid:{}".format(rid), str(request.sid))
 
 
 @socketio.on('relayICECandidate')
 def on_ice_candidate(msg):
     peer_id = msg["peer_id"]
-    socketio.to(peer_id).emit('iceCandidate', msg)
+    socketio.emit('iceCandidate', msg, room=peer_id)
 
 
 @socketio.on('relaySessionDescription')
 def on_relay_session(msg):
     peer_id = msg["peer_id"]
-    socketio.to(peer_id).emit('sessionDescription', msg)
+    socketio.emit('sessionDescription', msg, room=peer_id)
 
 
 @socketio.on('disconnect')
