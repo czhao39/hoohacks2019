@@ -68,9 +68,11 @@ function showSubtitle(text, ws, isFinal) {
 }
 
 function updateTranscriptRecorder(text) {
-    var $block = $("<blockquote>" + $("<div />").text(text).html() + "</blockquote>").appendTo($(".transcript-recorder"));
+    var $container = $(".transcript-recorder");
+    var $block = $("<blockquote>" + $("<div />").text(text).html() + "</blockquote>").appendTo($container);
     $block.css("backgroundColor", "yellow");
     $block.animate({backgroundColor: "white"}, 500);
+    $container.scrollTop($container[0].scrollHeight);
 }
 
 $(document).ready(function() {
