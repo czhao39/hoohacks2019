@@ -20,7 +20,7 @@ socketio = SocketIO(app)
 recog_client = speech.SpeechClient()
 translate_client = translate.Client()
 recog_config = types.RecognitionConfig(
-                   encoding=enums.RecognitionConfig.AudioEncoding.LINEAR16,
+                   encoding=enums.RecognitionConfig.AudioEncoding.OGG_OPUS,
                    sample_rate_hertz=16000,
                    language_code='en-US')
 
