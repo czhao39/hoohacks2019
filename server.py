@@ -1,24 +1,18 @@
 #!/usr/bin/env python3
 
 import os
-import json
-import sys
 import random
-import io
-import time
 import subprocess
 import threading
 import redis
-
-from collections import deque
 
 from google.cloud import speech
 from google.cloud.speech import enums
 from google.cloud.speech import types
 from google.cloud import translate
 
-from flask import *
-from flask_socketio import SocketIO, join_room, leave_room, emit
+from flask import Flask, redirect, render_template, request, session
+from flask_socketio import SocketIO, join_room, emit
 
 app = Flask(__name__, static_url_path="")
 app.config['SECRET_KEY'] = os.urandom(24)
@@ -28,9 +22,10 @@ if "GOOGLE_APPLICATION_CREDENTIALS" in os.environ:
     recog_client = speech.SpeechClient()
     translate_client = translate.Client()
     recog_config = types.RecognitionConfig(
-                       encoding=enums.RecognitionConfig.AudioEncoding.FLAC,
-                       sample_rate_hertz=48000,
-                       language_code='en-US')
+        encoding=enums.RecognitionConfig.AudioEncoding.FLAC,
+        sample_rate_hertz=48000,
+        language_code='en-US'
+    )
     streaming_config = types.StreamingRecognitionConfig(config=recog_config)
     redis = redis.Redis(host='localhost', port=6379, db=0)
 
@@ -38,6 +33,7 @@ if "GOOGLE_APPLICATION_CREDENTIALS" in os.environ:
 @app.route("/")
 def landing():
     return render_template("landing.html")
+
 
 @app.route("/host")
 def host():
@@ -51,9 +47,11 @@ def host():
 
     return redirect("/call/" + call_id + "?role=host", code=302)
 
+
 @app.route("/call/<call_id>")
 def call(call_id):
     return render_template("call.html", event_id=call_id, role=request.args.get("role", "watch"))
+
 
 @app.route("/watch")
 def watch_landing():
@@ -79,6 +77,7 @@ def on_translate(msg):
 
 def convert_audio(content):
     return subprocess.check_output(["ffmpeg", "-f", "webm", "-i", "pipe:0", "-f", "flac", "pipe:1"], input=content, stderr=subprocess.DEVNULL)
+
 
 @socketio.on('connect')
 def on_connect():
@@ -133,6 +132,7 @@ def transcribe_audio(stream):
     text = [res.alternatives[0].transcript for res in response.results]
     return text
 
+
 def audio_generator(sid, flac):
     p = redis.pubsub()
     p.subscribe(sid)
@@ -142,6 +142,7 @@ def audio_generator(sid, flac):
         if not isinstance(info, int):
             yield info
 
+
 def transcribe_streaming(sid, flac):
     requests = (types.StreamingRecognizeRequest(audio_content=content)
                 for content in audio_generator(sid, flac))
@@ -150,6 +151,7 @@ def transcribe_streaming(sid, flac):
         if response.results[0].is_final:
             text = response.results[0].alternatives[0].transcript
             emit("text", text)
+
 
 def translate_text(text, target_lang):
     translation = translate_client.translate(text, target_language=target_lang)
