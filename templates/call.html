@@ -23,7 +23,11 @@
             <option value="it">Italiano</option>
             <option value="zh">普通话 (中国大陆)</option>
         </select>
+        {% if role == "host" %}
+        <label>Speech Language</label>
+        {% else %}
         <label>Subtitle Language</label>
+        {% endif %}
     </div>
 
     <div class="row">
@@ -35,7 +39,7 @@
         </div>
         <div class="col s12 l4 transcript-recorder-wrapper">
             <div class="card-panel white transcript-recorder">
-                <h4 class="center-align">Transcript</h4>
+                <h4 class="center-align"><u>Transcript</u></h4>
             </div>
         </div>
     </div>
