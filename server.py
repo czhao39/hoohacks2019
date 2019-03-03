@@ -23,6 +23,7 @@ recog_config = types.RecognitionConfig(
                    encoding=enums.RecognitionConfig.AudioEncoding.OGG_OPUS,
                    sample_rate_hertz=16000,
                    language_code='en-US')
+streaming_config = types.StreamingRecognitionConfig(config=recog_config)
 
 
 @app.route("/")
@@ -73,6 +74,12 @@ def transcribe_audio(stream):
     response = recog_client.recognize(recog_config, audio)
     text = [res.alternatives[0].transcript for res in response.results]
     return text
+
+def transcribe_streaming(audio_generator):
+    requests = (types.StreamingRecognizeRequest(audio_content=content)
+                for content in audio_generator)
+    responses = recog_client.streaming_recognize(streaming_config, requests)
+    return [res.alternatives[0].transcript for res in responses.results if res.is_final]
 
 def translate_text(text, target_lang):
     translation = translate_client.translate(text, target_language=target_lang)
