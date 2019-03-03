@@ -106,11 +106,10 @@ def transcribe_streaming(sid, flac):
     requests = (types.StreamingRecognizeRequest(audio_content=content)
                 for content in audio_generator(sid, flac))
     responses = recog_client.streaming_recognize(streaming_config, requests)
-    transcript = []
     for response in responses:
         if response.results[0].is_final:
-            print(response.results[0].alternatives[0].transcript)
-            transcript.append(response.results[0].alternatives[0].transcript)
+            text = response.results[0].alternatives[0].transcript
+            socketio.emit("text", text)
 
 def translate_text(text, target_lang):
     translation = translate_client.translate(text, target_language=target_lang)
