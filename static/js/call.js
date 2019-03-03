@@ -14,13 +14,13 @@ function init(ws, callback) {
         videoElement.srcObject = stream;
         videoElement.play();
 
-        var recog = new webkitSpeechRecognition();
+        window.recog = new webkitSpeechRecognition();
         var tempString = "";
-        recog.lang = "en-US";
-        recog.interimResults = true;
-        recog.maxAlternatives = 1;
-        recog.continuous = true;
-        recog.onresult = function(e) {
+        window.recog.lang = "en-US";
+        window.recog.interimResults = true;
+        window.recog.maxAlternatives = 1;
+        window.recog.continuous = true;
+        window.recog.onresult = function(e) {
             for (var i = e.resultIndex; i < e.results.length; ++i) {
                 var transcript = e.results[i][0].transcript;
                 var isFinal = e.results[i].isFinal;
@@ -37,10 +37,10 @@ function init(ws, callback) {
                 }
             }
         };
-        recog.onerror = function(e) {
+        window.recog.onerror = function(e) {
             console.log("SpeechRecognition error: " + e.error);
         };
-        recog.start();
+        window.recog.start();
         callback(stream);
     }).catch(function(e) {
         if (window.location.protocol === "http:" && window.location.hostname.indexOf("localhost") !== 0) {
@@ -224,12 +224,18 @@ $(document).ready(function() {
             $recordBtn.addClass("blue-grey");
             $recordBtn.removeClass("pulse");
             $videoEle[0].pause();
+            if (window.recog) {
+                window.recog.stop();
+            }
             ws.emit('videoControl', 'pause');
         } else {
             $recordBtn.removeClass("blue-grey");
             $recordBtn.addClass("red");
             $recordBtn.addClass("pulse");
             $videoEle[0].play();
+            if (window.recog) {
+                window.recog.start();
+            }
             ws.emit('videoControl', 'play');
         }
     }
