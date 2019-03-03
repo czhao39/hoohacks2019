@@ -27,7 +27,9 @@ if "GOOGLE_APPLICATION_CREDENTIALS" in os.environ:
         language_code='en-US'
     )
     streaming_config = types.StreamingRecognitionConfig(config=recog_config)
-    redis = redis.Redis(host='localhost', port=6379, db=0)
+
+
+rdb = redis.Redis(host='localhost', port=6379, db=0)
 
 
 @app.route("/")
@@ -66,7 +68,7 @@ def on_message(msg):
         session["init"] = True
         threading.Thread(target=transcribe_streaming, args=(sid, flac)).start()
     else:
-        redis.publish(sid, flac)
+        rdb.publish(sid, flac)
 
 
 @socketio.on('translate')
@@ -95,9 +97,9 @@ def on_join_call(msg):
     sid = str(request.sid)
     join_room(rid)
     if msg["role"] == "host":
-        redis.set("sid:{}".format(rid), sid)
+        rdb.set("sid:{}".format(rid), sid)
     else:
-        hid = redis.get("sid:{}".format(rid))
+        hid = rdb.get("sid:{}".format(rid))
         if isinstance(hid, bytes):
             hid = hid.decode("utf-8")
         emit('addPeer', {'peer_id': sid, 'your_id': hid, 'room_id': rid, 'should_create_offer': False}, room=hid, include_self=False)
@@ -134,7 +136,7 @@ def transcribe_audio(stream):
 
 
 def audio_generator(sid, flac):
-    p = redis.pubsub()
+    p = rdb.pubsub()
     p.subscribe(sid)
     yield flac
     for message in p.listen():

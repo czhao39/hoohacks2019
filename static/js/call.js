@@ -6,6 +6,7 @@ function init(ws, callback) {
         }
 
         const videoElement = document.getElementById("self-video");
+        videoElement.setAttribute("muted", true);
         videoElement.srcObject = stream;
         videoElement.play();
 
