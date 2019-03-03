@@ -4,6 +4,7 @@ import os
 import sys
 import random
 import io
+import subprocess
 
 from google.cloud import speech
 from google.cloud.speech import enums
@@ -54,7 +55,11 @@ def watch_landing():
 @socketio.on('sound')
 def on_message(msg):
     # TODO: implement sound -> text, msg is webm audio in raw format
-    print(msg)
+    flac = convert_audio(msg)
+
+
+def convert_audio(content):
+    return subprocess.check_output(["ffmpeg", "-f", "webm", "-i", "pipe:0", "-f", "flac", "pipe:1"], input=content)
 
 
 @socketio.on('connect')
